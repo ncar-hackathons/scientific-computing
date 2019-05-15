@@ -132,6 +132,9 @@ collections:
 # to override the default setting.
 exclude:
   - notebooks/
+  - binder
+  - ci
+  - .circleci
   - scripts/
   - Gemfile
   - Gemfile.lock
