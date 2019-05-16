@@ -55,7 +55,7 @@ jupyterhub_interact_text         : "Interact"  # The text that interact buttons 
 
 # Binder link settings
 use_binder_button                : true  # If 'true', add a binder button for interactive links
-binderhub_url                    : "https://mybinder.org"  # The URL for your BinderHub. If no URL, use ""
+binderhub_url                    : "https://binder.pangeo.io"  # The URL for your BinderHub. If no URL, use ""
 binder_repo_base                 : "https://github.com/"  # The site on which the textbook repository is hosted
 binder_repo_org                  : "ncar-hackathons"  # The username or organization that owns this repository
 binder_repo_name                 : "scientific-computing"  # The name of the repository on the web
@@ -63,7 +63,7 @@ binder_repo_branch               : "master"  # The branch on which your textbook
 binderhub_interact_text          : "Interact"  # The text that interact buttons will contain.
 
 # Thebelab settings
-use_thebelab_button              : false  # If 'true', display a button to allow in-page running code cells with Thebelab
+use_thebelab_button              : true  # If 'true', display a button to allow in-page running code cells with Thebelab
 thebelab_button_text             : "Thebelab"  # The text to display inside the Thebelab initialization button
 codemirror_theme                 : "abcdef"  # Theme for codemirror cells, for options see https://codemirror.net/doc/manual.html#config
 
