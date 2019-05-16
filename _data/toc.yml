@@ -34,13 +34,3 @@
     url: /numpy/02_memory_layout
   - title: Array Creation
     url: /numpy/03_array_creation
-  - title: Control Flow Statements
-    url: /beginners/05_control_flow_statements
-  - title: Functions
-    url: /beginners/06_functions
-  - title: Modules
-    url: /beginners/07_modules
-  - title: Object Oriented Python
-    url: /beginners/08_classes
-  - title: Further Reading
-    url: /beginners/extra
