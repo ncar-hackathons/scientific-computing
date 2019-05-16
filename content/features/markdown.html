@@ -29,9 +29,9 @@
   "headline":
     "Creating book content",
   "datePublished":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "dateModified":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "description":
     "",
   "author": {
@@ -146,6 +146,134 @@ initFunction(function () {
 
   <!-- Load Thebelab for interactive widgets -->
   <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/scientific-computing/assets/images/edit-button.svg" alt="Start interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlighter-rouge:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+
+<script type="text/x-thebe-config">
+    {
+      requestKernel: true,
+      binderOptions: {
+        repo: 'ncar-hackathons/scientific-computing',
+        ref: 'master',
+      },
+      codeMirrorConfig: {
+        theme: "abcdef"
+      },
+      kernelOptions: {
+        name: 'python3',
+      }
+    }
+</script>
+<script src="https://unpkg.com/thebelab@0.4.0/lib/index.js"></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // Figure out the language it uses and add this too
+                var parentDiv = codeCell.parentElement.parentElement;
+                var arrayLength = parentDiv.classList.length;
+                for (var ii = 0; ii < arrayLength; ii++) {
+                    var parts = parentDiv.classList[ii].split('language-');
+                    if (parts.length === 2) {
+                        // If found, assign dataLanguage and break the loop
+                        var dataLanguage = parts[1];
+                        break;
+                    }
+                }
+                codeCell.setAttribute('data-language', dataLanguage)
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+</script>
 
 
 
@@ -613,10 +741,10 @@ initFunction(initQuery);
       
       <li class="c-sidebar__chapter">
         <a class="c-sidebar__entry "
-          href="/scientific-computing/beginners/01_lexical_structure.html"
+          href="/scientific-computing/numpy/intro.html"
         >
           
-          Getting Started
+          NumPy Guide
         </a>
 
         
@@ -635,10 +763,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/02_data_types.html"
+                  href="/scientific-computing/numpy/01_numpy_array_object.html"
                 >
                   
-                  Data Types
+                  The NumPy Array Object
                 </a>
 
                 
@@ -652,10 +780,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/03_variables_and_references.html"
+                  href="/scientific-computing/numpy/02_memory_layout.html"
                 >
                   
-                  Variable and Other References
+                  Memory layout of multi-dimensional arrays
                 </a>
 
                 
@@ -669,95 +797,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/04_sequence_operations.html"
+                  href="/scientific-computing/numpy/03_array_creation.html"
                 >
                   
-                  Sequence Operations
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/05_control_flow_statements.html"
-                >
-                  
-                  Control Flow Statements
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/06_functions.html"
-                >
-                  
-                  Functions
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/07_modules.html"
-                >
-                  
-                  Modules
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/08_classes.html"
-                >
-                  
-                  Object Oriented Python
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/extra.html"
-                >
-                  
-                  Further Reading
+                  Array Creation
                 </a>
 
                 

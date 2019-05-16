@@ -7,16 +7,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,minimum-scale=1">
 
-  <title>Object Oriented Python</title>
-  <meta name="description" content="Object-Oriented Python">
+  <title>The NumPy Array Object</title>
+  <meta name="description" content="The NumPy Array Object">
 
-  <link rel="canonical" href="https://ncar-hackathons.github.io/scientific-computing/beginners/08_classes.html">
+  <link rel="canonical" href="https://ncar-hackathons.github.io/scientific-computing/numpy/01_numpy_array_object.html">
   <link rel="alternate" type="application/rss+xml" title="The Python Scientific Computing Ecosystem Guide" href="https://ncar-hackathons.github.io/scientific-computing/feed.xml">
 
-  <meta property="og:url"         content="https://ncar-hackathons.github.io/scientific-computing/beginners/08_classes.html" />
+  <meta property="og:url"         content="https://ncar-hackathons.github.io/scientific-computing/numpy/01_numpy_array_object.html" />
 <meta property="og:type"        content="article" />
-<meta property="og:title"       content="Object Oriented Python" />
-<meta property="og:description" content="Object-Oriented Python" />
+<meta property="og:title"       content="The NumPy Array Object" />
+<meta property="og:description" content="The NumPy Array Object" />
 <meta property="og:image"       content="" />
 
 
@@ -25,15 +25,15 @@
   "@context": "http://schema.org",
   "@type": "NewsArticle",
   "mainEntityOfPage":
-    "https://ncar-hackathons.github.io/scientific-computing/beginners/08_classes.html",
+    "https://ncar-hackathons.github.io/scientific-computing/numpy/01_numpy_array_object.html",
   "headline":
-    "Object Oriented Python",
+    "The NumPy Array Object",
   "datePublished":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "dateModified":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "description":
-    "Object-Oriented Python",
+    "The NumPy Array Object",
   "author": {
     "@type": "Person",
     "name": "The XDev Team"
@@ -146,6 +146,134 @@ initFunction(function () {
 
   <!-- Load Thebelab for interactive widgets -->
   <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/scientific-computing/assets/images/edit-button.svg" alt="Start interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlighter-rouge:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+
+<script type="text/x-thebe-config">
+    {
+      requestKernel: true,
+      binderOptions: {
+        repo: 'ncar-hackathons/scientific-computing',
+        ref: 'master',
+      },
+      codeMirrorConfig: {
+        theme: "abcdef"
+      },
+      kernelOptions: {
+        name: 'python3',
+      }
+    }
+</script>
+<script src="https://unpkg.com/thebelab@0.4.0/lib/index.js"></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // Figure out the language it uses and add this too
+                var parentDiv = codeCell.parentElement.parentElement;
+                var arrayLength = parentDiv.classList.length;
+                for (var ii = 0; ii < arrayLength; ii++) {
+                    var parts = parentDiv.classList[ii].split('language-');
+                    if (parts.length === 2) {
+                        // If found, assign dataLanguage and break the loop
+                        var dataLanguage = parts[1];
+                        break;
+                    }
+                }
+                codeCell.setAttribute('data-language', dataLanguage)
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+</script>
 
 
 
@@ -613,10 +741,10 @@ initFunction(initQuery);
       
       <li class="c-sidebar__chapter">
         <a class="c-sidebar__entry "
-          href="/scientific-computing/beginners/01_lexical_structure.html"
+          href="/scientific-computing/numpy/intro.html"
         >
           
-          Getting Started
+          NumPy Guide
         </a>
 
         
@@ -634,113 +762,11 @@ initFunction(initQuery);
               
 
               <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/02_data_types.html"
-                >
-                  
-                  Data Types
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/03_variables_and_references.html"
-                >
-                  
-                  Variable and Other References
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/04_sequence_operations.html"
-                >
-                  
-                  Sequence Operations
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/05_control_flow_statements.html"
-                >
-                  
-                  Control Flow Statements
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/06_functions.html"
-                >
-                  
-                  Functions
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/07_modules.html"
-                >
-                  
-                  Modules
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
                 <a class="c-sidebar__entry c-sidebar__entry--active"
-                  href="/scientific-computing/beginners/08_classes.html"
+                  href="/scientific-computing/numpy/01_numpy_array_object.html"
                 >
                   
-                  Object Oriented Python
+                  The NumPy Array Object
                 </a>
 
                 
@@ -754,10 +780,27 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/extra.html"
+                  href="/scientific-computing/numpy/02_memory_layout.html"
                 >
                   
-                  Further Reading
+                  Memory layout of multi-dimensional arrays
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/03_array_creation.html"
+                >
+                  
+                  Array Creation
                 </a>
 
                 
@@ -801,11 +844,12 @@ initFunction(initQuery);
 
             
 <div class="buttons">
-<a href="/scientific-computing/content/beginners/08_classes.ipynb" download>
+<a href="/scientific-computing/content/numpy/01_numpy_array_object.ipynb" download>
 <button id="interact-button-download" class="interact-button">Download</button>
 </a>
 
 
+<button id="interact-button-thebelab" class="interact-button">Thebelab</button>
 
 
 
@@ -817,7 +861,7 @@ initFunction(initQuery);
 
 
 
-<a href="https://mybinder.org/v2/gh/ncar-hackathons/scientific-computing/master?urlpath=lab/tree/content%2Fbeginners%2F08_classes.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/scientific-computing/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
+<a href="https://binder.pangeo.io/v2/gh/ncar-hackathons/scientific-computing/master?urlpath=lab/tree/content%2Fnumpy%2F01_numpy_array_object.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/scientific-computing/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
 
 
 
@@ -825,58 +869,103 @@ initFunction(initQuery);
 
 
             <div class="c-textbook__content">
-              <h1 id="object-oriented-python">Object-Oriented Python</h1>
-
-<p>Python is an object oriented language, and so has very strong support for objects. In fact, everything in Python is an object, and almost everything has attributes and methods. All functions have a built-in attribute <code class="highlighter-rouge">__doc__</code>, which returns the doc string defined in the function’s source code.</p>
-
-<p>Here’s the bare minimum about Python objects:</p>
-
-<h2 id="defining-a-new-class">Defining a new class</h2>
+              <h1 id="the-numpy-array-object">The NumPy Array Object</h1>
 
 <ul>
-  <li>We define a class <code class="highlighter-rouge">MyObject</code> with 2 <code class="highlighter-rouge">special</code> double underscore methods and one normal method.</li>
-  <li>
-    <p>This class will have an attribute <code class="highlighter-rouge">x</code> that is specified at the time of creating new instances of the class:</p>
-
-    <ul>
-      <li>The <code class="highlighter-rouge">init</code> method initializes properties of any new instance of <code class="highlighter-rouge">MyObject</code></li>
-      <li>The <code class="highlighter-rouge">repr</code> method provides an accurate string representation of <code class="highlighter-rouge">MyObject</code>. For example, if we print an instance of <code class="highlighter-rouge">MyObject</code>, the repr method will be used. If you don’t specify a repr (or str) special method, the default name when printing only gives the address in memory.</li>
-    </ul>
-  </li>
+  <li>The core of the NumPy Library is one main object: <code class="highlighter-rouge">ndarray</code> (which stands for N-dimensional array)</li>
+  <li>This object is a multi-dimensional homogeneous array with a predetermined number of items</li>
+  <li>In addition to the data stored in the array, this data structure also contains important metadata about the array, such as its shape, size, data type, and other attributes.</li>
 </ul>
 
-<p>There are many more special method, as described in the <a href="https://docs.python.org/3.7/reference/datamodel.html">official documentation</a>. We invite you to check the documentation for more details.</p>
+<p><strong>Basic Attributes of the ndarray Class</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>shape</td>
+      <td>A tuple that contains the number of elements (i.e., the length)  for each dimension (axis) of the array.</td>
+    </tr>
+    <tr>
+      <td>size</td>
+      <td>The total number elements in the array.</td>
+    </tr>
+    <tr>
+      <td>ndim</td>
+      <td>Number of dimensions (axes).</td>
+    </tr>
+    <tr>
+      <td>nbytes</td>
+      <td>Number of bytes used to store the data.</td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td>The data type of the elements in the array.</td>
+    </tr>
+    <tr>
+      <td>itemsize</td>
+      <td>Defines teh size in bytes of each item in the array.</td>
+    </tr>
+    <tr>
+      <td>data</td>
+      <td>A buffer containing the actual elements of the array.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In order to use the NumPy library, we need to import it in our program. By convention,
+the numPy module imported under the alias np, like so:</p>
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyObject</span><span class="p">:</span>
-    <span class="s">""" Base class. """</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
-        
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s">'{self.__class__.__name__}({self.x})'</span>
-    
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s">"""Report type of contained value."""</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s">'My value is of type {type(self.x)}'</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 </code></pre></div>    </div>
   </div>
 
 </div>
 
-<h3 id="docstrings">Docstrings</h3>
+<p>After this, we can access functions and classes in the numpy module using the np
+namespace. Throughout this notebook, we assume that the NumPy module is imported in
+this way.</p>
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MyObject</span><span class="o">.</span><span class="n">__doc__</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>' Base class. '
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[10,  2],
+       [ 5,  8],
+       [ 1,  1]])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<p>Here the ndarray instance data is created from a nested Python list using the
+function <code class="highlighter-rouge">np.array</code>. More ways to create ndarray instances from data and from rules of
+various kinds are introduced later in this tutorial.</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>numpy.ndarray
 </code></pre></div>      </div>
 
     </div>
@@ -885,78 +974,14 @@ initFunction(initQuery);
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">help</span><span class="p">(</span><span class="n">MyObject</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Help on class MyObject in module __main__:
-
-class MyObject(builtins.object)
- |  Base class.
- |  
- |  Methods defined here:
- |  
- |  __init__(self, x)
- |      Initialize self.  See help(type(self)) for accurate signature.
- |  
- |  __repr__(self)
- |      Return repr(self).
- |  
- |  report(self)
- |      Report type of contained value.
- |  
- |  ----------------------------------------------------------------------
- |  Data descriptors defined here:
- |  
- |  __dict__
- |      dictionary for instance variables (if defined)
- |  
- |  __weakref__
- |      list of weak references to the object (if defined)
-
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MyObject</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">__doc__</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">ndim</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Report type of contained value.'
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<h2 id="making-an-instance-of-a-class">Making an instance of a class</h2>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj</span> <span class="o">=</span> <span class="n">MyObject</span><span class="p">(</span><span class="s">'hello world'</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MyObject(hello world)
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2
 </code></pre></div>      </div>
 
     </div>
@@ -965,40 +990,14 @@ class MyObject(builtins.object)
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj2</span> <span class="o">=</span> <span class="n">MyObject</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">2.78</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj2</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">size</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MyObject(2.78)
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<h3 id="attribute-access">Attribute access</h3>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj</span><span class="o">.</span><span class="n">x</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'hello world'
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>6
 </code></pre></div>      </div>
 
     </div>
@@ -1007,32 +1006,14 @@ class MyObject(builtins.object)
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj2</span><span class="o">.</span><span class="n">x</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2.78
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<h3 id="method-access">Method access</h3>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"My value is of type &lt;class 'str'&gt;"
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtype('int64')
 </code></pre></div>      </div>
 
     </div>
@@ -1041,73 +1022,14 @@ class MyObject(builtins.object)
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">obj2</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">nbytes</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"My value is of type &lt;class 'float'&gt;"
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<h2 id="class-inheritance">Class Inheritance</h2>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NewObject</span><span class="p">(</span><span class="n">MyObject</span><span class="p">):</span>
-    <span class="s">"""Derived class inherits from MyObject."""</span>
-    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s">"""Overwrite report() method of A."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
-</code></pre></div>    </div>
-  </div>
-
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">NewObject</span><span class="o">.</span><span class="n">__doc__</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'Derived class inherits from MyObject.'
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<h3 id="make-a-new-instance-of-class-newobject">Make a new instance of class NewObject</h3>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="n">NewObject</span><span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="n">j</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">NewObject</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">obj</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-</div>
-
-<h3 id="attribute-access-1">Attribute access</h3>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span><span class="o">.</span><span class="n">x</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(3+4j)
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>48
 </code></pre></div>      </div>
 
     </div>
@@ -1116,34 +1038,291 @@ class MyObject(builtins.object)
 
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">b</span><span class="o">.</span><span class="n">x</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">itemsize</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MyObject(hello world)
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>8
 </code></pre></div>      </div>
 
     </div>
   </div>
 </div>
 
-<h3 id="nested-attribute-access">Nested attribute access</h3>
-
 <div class="cell code_cell">
   <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">b</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="o">.</span><span class="n">data</span>
 </code></pre></div>    </div>
   </div>
 
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"My value is of type &lt;class 'str'&gt;"
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;memory at 0x10c240990&gt;
 </code></pre></div>      </div>
 
+    </div>
+  </div>
+</div>
+
+<h2 id="data-types">Data types</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">dtype</code> attribute of the <code class="highlighter-rouge">ndarray</code> describes the data type of each element in the array.</li>
+  <li>Since NumPy arrays are homogeneous, all elements have the same data type.</li>
+</ul>
+
+<h3 id="basic-numerical-data-types-available-in-numpy">Basic Numerical Data Types Available in NumPy</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>dtype</th>
+      <th>Variants</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>int</td>
+      <td>int8, int16, int32, int64</td>
+      <td>Integers</td>
+    </tr>
+    <tr>
+      <td>uint</td>
+      <td>uint8, uint16, uint32, uint64</td>
+      <td>Unsigned (non-negative) integers</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td>Bool</td>
+      <td>Boolean (True or False)</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td>float16, float32, float64, float128</td>
+      <td>Floating-point numbers</td>
+    </tr>
+    <tr>
+      <td>complex</td>
+      <td>complex64, complex128, complex256</td>
+      <td>Complex-valued floating-point numbers</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Once a NumPy array is created, its <code class="highlighter-rouge">dtype</code> cannot be changed, other than by creating a new copy with type-casted array values</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">87</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">data</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([ 5.,  9., 87.], dtype=float32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="c"># use np.array function for type-casting</span>
+<span class="n">data</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([ 5,  9, 87], dtype=int32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">87</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">data</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([ 5.,  9., 87.], dtype=float32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="c"># Use astype method of the ndarray class for type-casting</span>
+<span class="n">data</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([ 5,  9, 87], dtype=int32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<h3 id="data-type-promotion">Data Type Promotion</h3>
+
+<p>When working with NumPy arrays, the data type might get promoted from one type to another, if required by the operation. 
+For instance, adding float-value and integer-valued arrays, the resulting array is a float-valued array:</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arr1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">arr1</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([0., 2., 3.])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arr2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">arr2</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([10, 20, 30])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">res</span> <span class="o">=</span> <span class="n">arr1</span> <span class="o">+</span> <span class="n">arr2</span>
+<span class="n">res</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([10., 22., 33.])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">res</span><span class="o">.</span><span class="n">dtype</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtype('float64')
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<p><strong>NOTE:</strong></p>
+
+<p>In some cases, depending on the application and its requirements, it is essential to create arrays with data type appropriately set to right data type. The default data type is <code class="highlighter-rouge">float</code>:</p>
+
+<hr />
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([0.        ,        nan, 1.41421356])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">))</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([0.        +0.j, 0.        +1.j, 1.41421356+0.j])
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<p>Here, using the <code class="highlighter-rouge">np.sqrt</code> function to compute the square root of each element in
+an array gives different results depending on the data type of the array. Only when the data type of the array is complex is the square root of <code class="highlighter-rouge">–1</code> resulting in the imaginary unit (denoted as <code class="highlighter-rouge">1j</code> in Python).</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">watermark</span>
+<span class="o">%</span><span class="n">watermark</span> <span class="o">--</span><span class="n">iversion</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">m</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">u</span> <span class="o">-</span><span class="n">d</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>numpy 1.16.3
+last updated: 2019-05-16 
+
+CPython 3.6.7
+IPython 7.5.0
+
+compiler   : GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)
+system     : Darwin
+release    : 18.2.0
+machine    : x86_64
+processor  : i386
+CPU cores  : 8
+interpreter: 64bit
+Git hash   : 0f58e677706b1694ce7747ed41ec62e4fa43d03f
+</code></pre></div>      </div>
     </div>
   </div>
 </div>
@@ -1151,15 +1330,15 @@ class MyObject(builtins.object)
               <nav class="c-page__nav">
   
     
-    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/scientific-computing/beginners/07_modules">
-      〈 <span class="u-margin-right-tiny"></span> Modules
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/scientific-computing/numpy/intro">
+      〈 <span class="u-margin-right-tiny"></span> NumPy Guide
     </a>
   
 
   
     
-    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/beginners/extra">
-      Further Reading <span class="u-margin-right-tiny"></span> 〉
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/numpy/02_memory_layout">
+      Memory layout of multi-dimensional... <span class="u-margin-right-tiny"></span> 〉
     </a>
   
 </nav>

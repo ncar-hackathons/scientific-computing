@@ -29,9 +29,9 @@
   "headline":
     "Search the site",
   "datePublished":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "dateModified":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "description":
     "",
   "author": {
@@ -146,6 +146,134 @@ initFunction(function () {
 
   <!-- Load Thebelab for interactive widgets -->
   <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/scientific-computing/assets/images/edit-button.svg" alt="Start interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlighter-rouge:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+
+<script type="text/x-thebe-config">
+    {
+      requestKernel: true,
+      binderOptions: {
+        repo: 'ncar-hackathons/scientific-computing',
+        ref: 'master',
+      },
+      codeMirrorConfig: {
+        theme: "abcdef"
+      },
+      kernelOptions: {
+        name: 'python3',
+      }
+    }
+</script>
+<script src="https://unpkg.com/thebelab@0.4.0/lib/index.js"></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // Figure out the language it uses and add this too
+                var parentDiv = codeCell.parentElement.parentElement;
+                var arrayLength = parentDiv.classList.length;
+                for (var ii = 0; ii < arrayLength; ii++) {
+                    var parts = parentDiv.classList[ii].split('language-');
+                    if (parts.length === 2) {
+                        // If found, assign dataLanguage and break the loop
+                        var dataLanguage = parts[1];
+                        break;
+                    }
+                }
+                codeCell.setAttribute('data-language', dataLanguage)
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+</script>
 
 
 
@@ -613,10 +741,10 @@ initFunction(initQuery);
       
       <li class="c-sidebar__chapter">
         <a class="c-sidebar__entry "
-          href="/scientific-computing/beginners/01_lexical_structure.html"
+          href="/scientific-computing/numpy/intro.html"
         >
           
-          Getting Started
+          NumPy Guide
         </a>
 
         
@@ -635,10 +763,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/02_data_types.html"
+                  href="/scientific-computing/numpy/01_numpy_array_object.html"
                 >
                   
-                  Data Types
+                  The NumPy Array Object
                 </a>
 
                 
@@ -652,10 +780,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/03_variables_and_references.html"
+                  href="/scientific-computing/numpy/02_memory_layout.html"
                 >
                   
-                  Variable and Other References
+                  Memory layout of multi-dimensional arrays
                 </a>
 
                 
@@ -669,95 +797,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/04_sequence_operations.html"
+                  href="/scientific-computing/numpy/03_array_creation.html"
                 >
                   
-                  Sequence Operations
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/05_control_flow_statements.html"
-                >
-                  
-                  Control Flow Statements
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/06_functions.html"
-                >
-                  
-                  Functions
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/07_modules.html"
-                >
-                  
-                  Modules
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/08_classes.html"
-                >
-                  
-                  Object Oriented Python
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/extra.html"
-                >
-                  
-                  Further Reading
+                  Array Creation
                 </a>
 
                 
@@ -803,85 +846,45 @@ initFunction(initQuery);
 <script>
     // Add the lunr store since we will now search it
     var store = [{
-        "title": "Getting Started",
-        
-        "excerpt":
-            "Lexical Structure Python is very particular about program layout, especially with regard to lines and indentation. Lines and Indentation In Python, the end of a physical line marks the end of most statements. Unlike in othe programming languages such as C, C++, Python statements are not normally terminated with a delimiter, such as a semicolon (;). When a statement is too long to fit on a single physical line, you can join two adjacent physical lines into a logical line by ensuring that the first physical line has no comment and ends with a backslash (\\) Python also joins adjacent...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/01_lexical_structure.html",
-        "teaser":null},{
-        "title": "Data Types",
-        
-        "excerpt":
-            "Data Types All data values in Python are represented by objects, and each object, or value, has a type. An object’s type determines what operations you can perform on the data value. The type also determines the object’s attributes and items (if any) and whether the object can be altered. Python has built-in objects for fundamental data types such as numbers, strings, tuples, lists, sets, and dictionaries Numeric Types — int, float, complex The built-in number objects in Python support integers (plain, long) , floating-point numbers, and complex numbers. All numbers in Python are immutable objects, i.e. when you perform...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/02_data_types.html",
-        "teaser":null},{
-        "title": "Variable and Other References",
-        
-        "excerpt":
-            "Variables and Other References In Python, there are no declarations. The existence of a variable depends on a statement that sets a name to hold a reference to some object In Python, a variable or other reference has no intrinsic type: a = 5 # bind a to int(5) a 5 type(a) int a = 68.98 # bind a to a float a 68.98 type(a) float a = b = c = 'hello' # multiple assignements to the same value a, b, c ('hello', 'hello', 'hello') To unbind reference of an object, a del statement can be used: del a...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/03_variables_and_references.html",
-        "teaser":null},{
-        "title": "Sequence Operations",
-        
-        "excerpt":
-            "Sequence Operations Python supports a variety of operations that can be applied to sequence types, including strings, lists and tuples Indexing a sequence The nth item of a sequence S is denoted by an indexing: S[n]. Note that indexing in Python is zero-based: if S has L items, the index n may be 0, 1, ..., L-1: x = [ 10, 33, 58, 9] x [10, 33, 58, 9] # A negative `n` indicates the same item in `S` as L+n x[-1] # Get last element 9 x[3] 9 len(x) # Find number of items 4 Slicing a sequence You...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/04_sequence_operations.html",
-        "teaser":null},{
-        "title": "Control Flow Statements",
-        
-        "excerpt":
-            "Control Flow Statements The if statement 'a' if 3 &lt; 4 else 'b' 'a' 'a' if 4 &lt; 3 else 'b' 'b' temp = 95 if temp &gt;= 90: print('A') elif score &gt;= 80: print('B') else: print('C') A NOTE Unlike some languages, Python does not have a switch statement, so you must use if, elif, and else for all condition processing. In Python, any non-zero number, or non-empty string, tuple, list, or dictionary evaluates as true: a = {} b = 'hello' if b: print('Yes') else: print('No') Yes When you want to test a value x in a Boolean context,...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/05_control_flow_statements.html",
-        "teaser":null},{
-        "title": "Functions",
-        
-        "excerpt":
-            "Functions In Python, functions are first class objects: they can have variable names assigned to them, they can be passed as arguments to other functions, and can even be returned from other functions. A function is given a name when it is defined, but that name can be reassigned to refer a different object if desired (don’t do this unless you mean to!) There are three types of functions in Python: Built-in functions, such as help() to ask for help, print() to print an object. You can Title Description abs() returns absolute value of a number any() Checks if any...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/06_functions.html",
-        "teaser":null},{
-        "title": "Modules",
-        
-        "excerpt":
-            "Modules A typical Python program is made up of several source files. Each source file corresponds to a module, which packages program codea nd data for reuse. Modules are normally independent of each other so that other programs can reuse teh specific modules they need. You can use any Python source file as a module by executing an import statement in some other code. import has the following syntax: import modname [as varname][,...] Let’s look at an example ot help our discusion of how to import and use Python modules: Import Python’s numeric package NumPy which we will talk about...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/07_modules.html",
-        "teaser":null},{
-        "title": "Object Oriented Python",
-        
-        "excerpt":
-            "Object-Oriented Python Python is an object oriented language, and so has very strong support for objects. In fact, everything in Python is an object, and almost everything has attributes and methods. All functions have a built-in attribute __doc__, which returns the doc string defined in the function’s source code. Here’s the bare minimum about Python objects: Defining a new class We define a class MyObject with 2 special double underscore methods and one normal method. This class will have an attribute x that is specified at the time of creating new instances of the class: The init method initializes properties...",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/08_classes.html",
-        "teaser":null},{
-        "title": "Further Reading",
-        
-        "excerpt":
-            "Further Reading      Python Tutorial   Python Official Documentation  ",
-        "categories": [],
-        "tags": [],
-        "url": "https://ncar-hackathons.github.io/scientific-computing/beginners/extra.html",
-        "teaser":null},{
         "title": "Home",
         
         "excerpt":
-            "Python Guide for People in a Hurry   This is a quick guide to the Python Language. To Learn Python from scratch, we suggest you start with Think Python: How to Think Like a Computer Scientist by Allen Downey.   If you already know other programming languages and just want to learn the specifics of Python, this tutorial is for you. We are going to cover a lot of ground at a pretty fast pace.  ",
+            "The Scientific Python ecosystem Unlike Matlab, IDL, NCL, or R, Python does not come with a pre-bundled set of modules for scientific computing. Below are the building blocks that can be combined to obtain a scientific computing environment: Interactive, exploratory work : Jupyter offers an end-user environment for work, a component to embed in other systems to provide an interactive control interface, and an abstraction of these ideas over the network for interactive distributed and parallel computing. Numerical arrays : Most Python numerical codes today are based on the NumPy library. N-dimensional array object is the basic data structure that...",
         "categories": [],
         "tags": [],
         "url": "https://ncar-hackathons.github.io/scientific-computing/intro.html",
+        "teaser":null},{
+        "title": "The NumPy Array Object",
+        
+        "excerpt":
+            "The NumPy Array Object The core of the NumPy Library is one main object: ndarray (which stands for N-dimensional array) This object is a multi-dimensional homogeneous array with a predetermined number of items In addition to the data stored in the array, this data structure also contains important metadata about the array, such as its shape, size, data type, and other attributes. Basic Attributes of the ndarray Class Attribute Description shape A tuple that contains the number of elements (i.e., the length) for each dimension (axis) of the array. size The total number elements in the array. ndim Number of...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/numpy/01_numpy_array_object.html",
+        "teaser":null},{
+        "title": "Memory layout of multi-dimensional arrays",
+        
+        "excerpt":
+            "Memory Layout of Multi-dimensional Arrays Multidimensional arrays are stored as contiguous data in memory. There’s freedom of choice in how to arrange the array elements in this memory segment. Consider the case of a two-dimensional array, containing rows and columns: One possible way to store this array as a consecutive sequence of values is to store the rows after each other, and another equally valid approach is to store the columns one after another. The former is called row-major format and the latter is column-major format. Memory Layout Format row-major column-major Whether to use row-major or column-major is a matter...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/numpy/02_memory_layout.html",
+        "teaser":null},{
+        "title": "Array Creation",
+        
+        "excerpt":
+            "Creating Arrays In the previous section, we looked at NumPy’s basic data structure for representing arrays, the ndarray class, and we looked at the basic attributes of this class. In this section we focus on functions from the NumPy library that can be used to create ndarray instances. NumPy provides a set of functions generate ndarrays depending on their properties and the applications they are used for. Throughout this tutorial you’ll discover that these features will be useful. Arrays Created from Lists and Other Array-like Objects Using the np.array() function, NumPy arrays can be constructed from explicit Python lists, iterable...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/numpy/03_array_creation.html",
+        "teaser":null},{
+        "title": "NumPy Guide",
+        
+        "excerpt":
+            "Introduction NumPy provides the numerical backend for nearly every scientific or technical library for Python. In fact, NumPy is the foundation library for scientific computing in Python since it provides data structures and high-performing functions that the basic Python standard library cannot provide. Therefore, knowledge of this library is essential in terms of numerical calculations since its correct use can greatly influence the performance of your computations. NumPy provides the following additional features: Ndarray: A multidimensional array much faster and more efficient than those provided by the basic package of Python. The core of NumPy is implemented in C and...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/numpy/intro.html",
         "teaser":null},]
 
 </script>

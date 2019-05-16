@@ -7,16 +7,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,minimum-scale=1">
 
-  <title>Control Flow Statements</title>
-  <meta name="description" content="Control Flow Statements">
+  <title>NumPy Guide</title>
+  <meta name="description" content="Introduction">
 
-  <link rel="canonical" href="https://ncar-hackathons.github.io/scientific-computing/beginners/05_control_flow_statements.html">
+  <link rel="canonical" href="https://ncar-hackathons.github.io/scientific-computing/numpy/intro.html">
   <link rel="alternate" type="application/rss+xml" title="The Python Scientific Computing Ecosystem Guide" href="https://ncar-hackathons.github.io/scientific-computing/feed.xml">
 
-  <meta property="og:url"         content="https://ncar-hackathons.github.io/scientific-computing/beginners/05_control_flow_statements.html" />
+  <meta property="og:url"         content="https://ncar-hackathons.github.io/scientific-computing/numpy/intro.html" />
 <meta property="og:type"        content="article" />
-<meta property="og:title"       content="Control Flow Statements" />
-<meta property="og:description" content="Control Flow Statements" />
+<meta property="og:title"       content="NumPy Guide" />
+<meta property="og:description" content="Introduction" />
 <meta property="og:image"       content="" />
 
 
@@ -25,15 +25,15 @@
   "@context": "http://schema.org",
   "@type": "NewsArticle",
   "mainEntityOfPage":
-    "https://ncar-hackathons.github.io/scientific-computing/beginners/05_control_flow_statements.html",
+    "https://ncar-hackathons.github.io/scientific-computing/numpy/intro.html",
   "headline":
-    "Control Flow Statements",
+    "NumPy Guide",
   "datePublished":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "dateModified":
-    "2019-05-16T19:12:55+00:00",
+    "2019-05-16T23:56:41+00:00",
   "description":
-    "Control Flow Statements",
+    "Introduction",
   "author": {
     "@type": "Person",
     "name": "The XDev Team"
@@ -146,6 +146,134 @@ initFunction(function () {
 
   <!-- Load Thebelab for interactive widgets -->
   <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/scientific-computing/assets/images/edit-button.svg" alt="Start interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlighter-rouge:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+
+<script type="text/x-thebe-config">
+    {
+      requestKernel: true,
+      binderOptions: {
+        repo: 'ncar-hackathons/scientific-computing',
+        ref: 'master',
+      },
+      codeMirrorConfig: {
+        theme: "abcdef"
+      },
+      kernelOptions: {
+        name: 'python3',
+      }
+    }
+</script>
+<script src="https://unpkg.com/thebelab@0.4.0/lib/index.js"></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // Figure out the language it uses and add this too
+                var parentDiv = codeCell.parentElement.parentElement;
+                var arrayLength = parentDiv.classList.length;
+                for (var ii = 0; ii < arrayLength; ii++) {
+                    var parts = parentDiv.classList[ii].split('language-');
+                    if (parts.length === 2) {
+                        // If found, assign dataLanguage and break the loop
+                        var dataLanguage = parts[1];
+                        break;
+                    }
+                }
+                codeCell.setAttribute('data-language', dataLanguage)
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+</script>
 
 
 
@@ -587,7 +715,7 @@ initFunction(initQuery);
       
       
       <li class="c-sidebar__chapter">
-        <a class="c-sidebar__entry "
+        <a class="c-sidebar__entry c-sidebar__entry--active"
           href="/scientific-computing/intro.html"
         >
           
@@ -612,11 +740,11 @@ initFunction(initQuery);
       
       
       <li class="c-sidebar__chapter">
-        <a class="c-sidebar__entry "
-          href="/scientific-computing/beginners/01_lexical_structure.html"
+        <a class="c-sidebar__entry c-sidebar__entry--active"
+          href="/scientific-computing/numpy/intro.html"
         >
           
-          Getting Started
+          NumPy Guide
         </a>
 
         
@@ -635,10 +763,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/02_data_types.html"
+                  href="/scientific-computing/numpy/01_numpy_array_object.html"
                 >
                   
-                  Data Types
+                  The NumPy Array Object
                 </a>
 
                 
@@ -652,10 +780,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/03_variables_and_references.html"
+                  href="/scientific-computing/numpy/02_memory_layout.html"
                 >
                   
-                  Variable and Other References
+                  Memory layout of multi-dimensional arrays
                 </a>
 
                 
@@ -669,95 +797,10 @@ initFunction(initQuery);
 
               <li class="c-sidebar__section">
                 <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/04_sequence_operations.html"
+                  href="/scientific-computing/numpy/03_array_creation.html"
                 >
                   
-                  Sequence Operations
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry c-sidebar__entry--active"
-                  href="/scientific-computing/beginners/05_control_flow_statements.html"
-                >
-                  
-                  Control Flow Statements
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/06_functions.html"
-                >
-                  
-                  Functions
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/07_modules.html"
-                >
-                  
-                  Modules
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/08_classes.html"
-                >
-                  
-                  Object Oriented Python
-                </a>
-
-                
-                
-
-              </li>
-              
-            
-              
-              
-
-              <li class="c-sidebar__section">
-                <a class="c-sidebar__entry "
-                  href="/scientific-computing/beginners/extra.html"
-                >
-                  
-                  Further Reading
+                  Array Creation
                 </a>
 
                 
@@ -800,333 +843,51 @@ initFunction(initQuery);
 </div>
 
             
-<div class="buttons">
-<a href="/scientific-computing/content/beginners/05_control_flow_statements.ipynb" download>
-<button id="interact-button-download" class="interact-button">Download</button>
-</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<a href="https://mybinder.org/v2/gh/ncar-hackathons/scientific-computing/master?urlpath=lab/tree/content%2Fbeginners%2F05_control_flow_statements.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/scientific-computing/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
-
-
-
-</div>
-
 
             <div class="c-textbook__content">
-              <h1 id="control-flow-statements">Control Flow Statements</h1>
-
-<h2 id="the-if-statement">The <code class="highlighter-rouge">if</code> statement</h2>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">'a'</span> <span class="k">if</span> <span class="mi">3</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="k">else</span> <span class="s">'b'</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'a'
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">'a'</span> <span class="k">if</span> <span class="mi">4</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="s">'b'</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'b'
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">temp</span> <span class="o">=</span> <span class="mi">95</span>
-
-<span class="k">if</span> <span class="n">temp</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'A'</span><span class="p">)</span>
-    
-<span class="k">elif</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">80</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'B'</span><span class="p">)</span>
-    
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'C'</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<hr />
-<p><strong>NOTE</strong></p>
-
-<p>Unlike some languages, Python does not have a <code class="highlighter-rouge">switch</code> statement, so you must use <code class="highlighter-rouge">if</code>, <code class="highlighter-rouge">elif</code>, and <code class="highlighter-rouge">else</code> for all condition processing.</p>
-
-<hr />
-
-<p>In Python, any non-zero number, or non-empty string, tuple, list, or dictionary evaluates as true:</p>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">b</span> <span class="o">=</span> <span class="s">'hello'</span>
-</code></pre></div>    </div>
-  </div>
-
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">b</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Yes'</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'No'</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Yes
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<p>When you want to test a value <code class="highlighter-rouge">x</code> in a Boolean context, it’s recommended to use the following coding style:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">x</span><span class="p">:</span>
-    <span class="o">...</span>
-</code></pre></div></div>
-<p>This is the clearest and most Pythonic form. Don’t use:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="o">...</span>
-<span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="o">...</span>
-<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="o">...</span>
-</code></pre></div></div>
-
-<hr />
-
-<p><strong>NOTE</strong></p>
-
-<ul>
-  <li>There is a crucial difference between saying that an expression <strong>returns True</strong> (meaning the expression returns the value 1 intended as a Boolean result) and saying that an expression <strong>evaluates to True</strong> (meaning the expression returns any result that is true in a Boolean context)</li>
-  <li>When testing an expression, you care about the latter condition, not the former.</li>
-</ul>
-
-<hr />
-
-<h2 id="the-while-statement">The <code class="highlighter-rouge">while</code> Statement</h2>
-
-<p>The <code class="highlighter-rouge">while</code> statement in Python supports repeated execution of a statement or block of statements that is controlled by a conditional expression:</p>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">x</span> <span class="o">=</span> <span class="mi">50</span>
-<span class="k">while</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="mi">2</span> <span class="c"># Truncating division</span>
-    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">'The approximate log2 of 50 is {count}'</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The approximate log2 of 50 is 6
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<h2 id="the-for-statement">The <code class="highlighter-rouge">for</code> Statement</h2>
+              <h1 id="introduction">Introduction</h1>
 
 <ul>
   <li>
-    <p>A for loop is used for iterating over a sequence (that is either a list, a tuple, a dictionary, a set, or a string).</p>
+    <p>NumPy provides the numerical backend for nearly every scientific or technical library for Python. In fact, NumPy is the foundation library for scientific computing in Python since it provides data structures and high-performing functions that the basic Python standard library cannot provide. Therefore, knowledge of this library is essential in terms of numerical calculations since its correct use can greatly influence the performance of your computations.</p>
   </li>
-  <li>
-    <p>With the for loop we can execute a set of statements, once for each item in a list, tuple, set etc.</p>
+  <li>NumPy provides the following additional features:
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">Ndarray</code>: A multidimensional array much faster and more efficient
+than those provided by the basic package of Python. The core of NumPy is implemented in C and provides efficient functions for manipulating and processing arrays.</p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">Element-wise computation</code>: A set of functions for performing this type of calculation with arrays and mathematical operations between arrays.</p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">Integration with other languages such as C, C++, and FORTRAN</code>: A
+set of tools to integrate code developed with these programming
+languages.</p>
+      </li>
+    </ul>
+  </li>
+  <li>At a first glance, NumPy arrays bear some resemblance to Python’s list data structure. But an important difference is that while Python lists are generic containers of objects:
+    <ul>
+      <li>NumPy arrays are homogenous and typed arrays of fixed size.</li>
+      <li>Homogenous means that all elements in the array have the same data type.</li>
+      <li>Fixed size means that an array cannot be resized (without creating a new array).</li>
+    </ul>
   </li>
 </ul>
-
-<p>Here’s the syntax for the <code class="highlighter-rouge">for</code> statement:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
-    <span class="n">statement</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-</code></pre></div></div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="s">"Python"</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Give me a {letter}..."</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Give me a P...
-Give me a y...
-Give me a t...
-Give me a h...
-Give me a o...
-Give me a n...
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">languages</span> <span class="o">=</span> <span class="p">[</span><span class="s">"Python"</span><span class="p">,</span> <span class="s">"C++"</span><span class="p">,</span> <span class="s">"IDL"</span><span class="p">,</span> <span class="s">"NCL"</span><span class="p">,</span> <span class="s">"Fortran"</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">language</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python
-C++
-IDL
-NCL
-Fortran
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<h2 id="the-break-statement">The <code class="highlighter-rouge">break</code> Statement</h2>
-
-<p>With the break statement we can stop the loop before it has looped through all the items:</p>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">language</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="s">"IDL"</span><span class="p">:</span>
-        <span class="k">break</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python
-C++
-IDL
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<h2 id="the-continue-statement">The <code class="highlighter-rouge">continue</code> Statement</h2>
-
-<p>With the continue statement we can stop the current iteration of the loop, and continue with the next:</p>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="s">"IDL"</span><span class="p">:</span>
-        <span class="k">continue</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">language</span><span class="p">)</span>
-
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Python
-C++
-NCL
-Fortran
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
-
-<h2 id="the-else-clause-on-loop-statements">The <code class="highlighter-rouge">else</code> Clause on Loop Statements</h2>
-
-<ul>
-  <li>Both the <code class="highlighter-rouge">while</code> and <code class="highlighter-rouge">for</code> statements may optionally have a trailing <code class="highlighter-rouge">else</code> clause. The statement or statements after the <code class="highlighter-rouge">else</code> execute when the loop terminates naturally.</li>
-  <li>When a loop contains one or more <code class="highlighter-rouge">break</code> statements, you oftern need to check whether the loop terminates naturally or prematurely. You can use na lese clause on the loop for this purpose:</li>
-</ul>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">languages</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['Python', 'C++', 'IDL', 'NCL', 'Fortran']
-</code></pre></div>      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="cell code_cell">
-  <div class="input_area">
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">lan</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">lan</span> <span class="o">==</span> <span class="s">'C'</span><span class="p">:</span>
-        <span class="k">break</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"Warning: no statisfactory item was found in {languages}"</span><span class="p">)</span>
-    <span class="n">lan</span> <span class="o">=</span> <span class="bp">None</span>
-</code></pre></div>    </div>
-  </div>
-
-  <div class="output_wrapper">
-    <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Warning: no statisfactory item was found in ['Python', 'C++', 'IDL', 'NCL', 'Fortran']
-</code></pre></div>      </div>
-    </div>
-  </div>
-</div>
 
               <nav class="c-page__nav">
   
     
-    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/scientific-computing/beginners/04_sequence_operations">
-      〈 <span class="u-margin-right-tiny"></span> Sequence Operations
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/scientific-computing/intro">
+      〈 <span class="u-margin-right-tiny"></span> Home
     </a>
   
 
   
     
-    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/beginners/06_functions">
-      Functions <span class="u-margin-right-tiny"></span> 〉
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/numpy/01_numpy_array_object">
+      The NumPy Array Object <span class="u-margin-right-tiny"></span> 〉
     </a>
   
 </nav>
