@@ -23,17 +23,17 @@
 - title: Search
   search: true
 
-- title: Getting Started
-  url: /beginners/01_lexical_structure
+- title: NumPy Guide
+  url: /numpy/intro
   not_numbered: true
   expand_sections: true
   sections:
-  - title: Data Types
-    url: /beginners/02_data_types
-  - title: Variable and Other References
-    url: /beginners/03_variables_and_references
-  - title: Sequence Operations
-    url: /beginners/04_sequence_operations
+  - title: The NumPy Array Object
+    url: /numpy/01_numpy_array_object
+  - title: Memory layout of multi-dimensional arrays
+    url: /numpy/02_memory_layout
+  - title: Array Creation
+    url: /numpy/03_array_creation
   - title: Control Flow Statements
     url: /beginners/05_control_flow_statements
   - title: Functions
