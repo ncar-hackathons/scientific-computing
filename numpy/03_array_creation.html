@@ -29,9 +29,9 @@
   "headline":
     "Array Creation",
   "datePublished":
-    "2019-05-16T23:56:41+00:00",
+    "2019-05-17T06:08:19+00:00",
   "dateModified":
-    "2019-05-16T23:56:41+00:00",
+    "2019-05-17T06:08:19+00:00",
   "description":
     "Creating Arrays",
   "author": {
@@ -809,6 +809,74 @@ initFunction(initQuery);
               </li>
               
             
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/04_indexing_and_slicing.html"
+                >
+                  
+                  Indexing and Slicing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/05_reshaping_and_resizing.html"
+                >
+                  
+                  Reshaping and Resizing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/06_vectorized_expressions.html"
+                >
+                  
+                  Vectorized Expressions
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/extra.html"
+                >
+                  
+                  Summary and Further Reading
+                </a>
+
+                
+                
+
+              </li>
+              
+            
           </ul>
         
       </li>
@@ -1220,7 +1288,7 @@ initFunction(initQuery);
 <div class="cell code_cell">
   <div class="input_area">
     <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xc</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yc</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">xc</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yc</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xc</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yc</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">xc</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yc</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 </code></pre></div>    </div>
   </div>
 
@@ -1291,19 +1359,19 @@ initFunction(initQuery);
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[-2.43826102e-05,  3.14410039e-06, -7.28159866e-07, ...,
-        -7.28159866e-07,  3.14410039e-06, -2.43826102e-05],
-       [ 1.78863625e-05, -2.17090586e-05, -1.96953856e-05, ...,
-        -1.96953856e-05, -2.17090586e-05,  1.78863625e-05],
-       [-2.35388696e-05, -1.22281456e-06, -5.14312739e-06, ...,
-        -5.14312739e-06, -1.22281456e-06, -2.35388696e-05],
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[-6.26401298, -0.12722142,  0.02897983, ...,  0.02897983,
+        -0.12722142, -6.26401298],
+       [ 1.04103746, -1.74389138, -1.24635196, ..., -1.24635196,
+        -1.74389138,  1.04103746],
+       [-2.88637827,  0.04870371,  0.20706408, ...,  0.20706408,
+         0.04870371, -2.88637827],
        ...,
-       [-2.35388696e-05, -1.22281456e-06, -5.14312739e-06, ...,
-        -5.14312739e-06, -1.22281456e-06, -2.35388696e-05],
-       [ 1.78863625e-05, -2.17090586e-05, -1.96953856e-05, ...,
-        -1.96953856e-05, -2.17090586e-05,  1.78863625e-05],
-       [-2.43826102e-05,  3.14410039e-06, -7.28159866e-07, ...,
-        -7.28159866e-07,  3.14410039e-06, -2.43826102e-05]])
+       [-2.88637827,  0.04870371,  0.20706408, ...,  0.20706408,
+         0.04870371, -2.88637827],
+       [ 1.04103746, -1.74389138, -1.24635196, ..., -1.24635196,
+        -1.74389138,  1.04103746],
+       [-6.26401298, -0.12722142,  0.02897983, ...,  0.02897983,
+        -0.12722142, -6.26401298]])
 </code></pre></div>      </div>
 
     </div>
@@ -1319,7 +1387,7 @@ initFunction(initQuery);
   <div class="output_wrapper">
     <div class="output_subarea">
 
-      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;matplotlib.contour.QuadContourSet at 0x113770da0&gt;
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;matplotlib.contour.QuadContourSet at 0x11b192ba8&gt;
 </code></pre></div>      </div>
 
     </div>
@@ -1369,14 +1437,14 @@ more arrays as argument to the <code class="highlighter-rouge">np.meshgrid()</co
 <p><strong>NOTE:</strong></p>
 
 <ul>
-  <li>
-    <h2 id="theres-no-guarantee-that-elements-generated-by-npempty-have-any-particular-values-for-this-reason-it-is-important-that-all-values-are-explicitly-assigned-before-the-array-is-used-otherwise-unpredictable-errors-are-likely-to-arise">There’s no guarantee that elements generated by <code class="highlighter-rouge">np.empty()</code> have any particular values. For this reason it is important that all values are explicitly assigned before the array is used; otherwise unpredictable errors are likely to arise.</h2>
-  </li>
+  <li>There’s no guarantee that elements generated by <code class="highlighter-rouge">np.empty()</code> have any particular values. For this reason it is important that all values are explicitly assigned before the array is used; otherwise unpredictable errors are likely to arise.</li>
 </ul>
+
+<hr />
 
 <h2 id="creating-arrays-with-properties-of-other-arrays">Creating Arrays with Properties of Other Arrays</h2>
 
-<p>It is often necessary to create new arrays that share properties, such as shape and ata type with another array. NumPy provides a family of functions for this purpose:</p>
+<p>It is often necessary to create new arrays that share properties, such as shape and data type with another array. NumPy provides a family of functions for this purpose:</p>
 
 <ul>
   <li><code class="highlighter-rouge">np.ones_like()</code></li>
@@ -1599,8 +1667,8 @@ more arrays as argument to the <code class="highlighter-rouge">np.meshgrid()</co
 
   <div class="output_wrapper">
     <div class="output_subarea">
-      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>numpy      1.16.3
-matplotlib 3.0.3
+      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>matplotlib 3.0.3
+numpy      1.16.3
 last updated: 2019-05-16 
 
 CPython 3.6.7
@@ -1613,7 +1681,7 @@ machine    : x86_64
 processor  : i386
 CPU cores  : 8
 interpreter: 64bit
-Git hash   : 0f58e677706b1694ce7747ed41ec62e4fa43d03f
+Git hash   : de652def25a7c27af680815143f400347196017d
 </code></pre></div>      </div>
     </div>
   </div>
@@ -1629,8 +1697,8 @@ Git hash   : 0f58e677706b1694ce7747ed41ec62e4fa43d03f
 
   
     
-    <a id="js-page__nav__next" class="c-page__nav__next" href="">
-       <span class="u-margin-right-tiny"></span> 〉
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/numpy/04_indexing_and_slicing">
+      Indexing and Slicing <span class="u-margin-right-tiny"></span> 〉
     </a>
   
 </nav>
