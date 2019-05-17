@@ -34,3 +34,5 @@
     url: /numpy/02_memory_layout
   - title: Array Creation
     url: /numpy/03_array_creation
+  - title: Indexing and Slicing
+    url: /numpy/04_indexing_and_slicing
