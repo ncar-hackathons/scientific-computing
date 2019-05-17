@@ -34,3 +34,11 @@
     url: /numpy/02_memory_layout
   - title: Array Creation
     url: /numpy/03_array_creation
+  - title: Indexing and Slicing
+    url: /numpy/04_indexing_and_slicing
+  - title: Reshaping and Resizing
+    url: /numpy/05_reshaping_and_resizing
+  - title: Vectorized Expressions
+    url: /numpy/06_vectorized_expressions
+  - title: Summary and Further Reading
+    url: /numpy/extra
