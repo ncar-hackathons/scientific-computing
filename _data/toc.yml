@@ -63,13 +63,5 @@
     url: /xarray/05_arithmetic
   - title: Alignment
     url: /xarray/06_alignment
-  - title: GroupBy Operations
-    url: /xarray/07_groupby
-  - title: Resampling Operations
-    url: /xarray/08_resampling
-  - title: Rolling Window Operations
-    url: /xarray/09_rolling
-  - title: Masking
-    url: /xarray/10_masking
-  - title: Plotting
-    url: /xarray/11_plotting
+  - title: GroupBy, Resampling, Rolling Window Operations
+    url: /xarray/07_groupby_resampling_rolling
