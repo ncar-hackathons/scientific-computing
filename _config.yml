@@ -133,6 +133,7 @@ collections:
 exclude:
   - notebooks/
   - binder
+  - content/data
   - ci
   - .circleci
   - scripts/

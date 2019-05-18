@@ -42,3 +42,26 @@
     url: /numpy/06_vectorized_expressions
   - title: Summary and Further Reading
     url: /numpy/extra
+
+
+- divider: true
+
+- title: Xarray Guide
+  url: /xarray/intro
+  not_numbered: true
+  expand_sections: true
+  sections:
+  - title: Data Structures
+    url: /xarray/01_data_structures
+  - title: Reading and Writing Files
+    url: /xarray/02_io
+  - title: Label-based Indexing
+    url: /xarray/03_label_indexing
+  - title: Aggregation
+    url: /xarray/04_agg
+  - title: Arithmetic
+    url: /xarray/05_arithmetic
+  - title: Alignment
+    url: /xarray/06_alignment
+  - title: GroupBy, Resampling, Rolling Window Operations
+    url: /xarray/07_groupby_resampling_rolling

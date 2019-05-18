@@ -110,3 +110,5 @@ scripts/tests/site/content/LICENSE.md
 
 # Template build
 _build/
+content/data/*.zarr
+content/data/rasm_test.nc
