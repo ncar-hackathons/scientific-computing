@@ -29,9 +29,9 @@
   "headline":
     "Search the site",
   "datePublished":
-    "2019-05-17T06:08:19+00:00",
+    "2019-05-18T20:06:44+00:00",
   "dateModified":
-    "2019-05-17T06:08:19+00:00",
+    "2019-05-18T20:06:44+00:00",
   "description":
     "",
   "author": {
@@ -883,6 +883,162 @@ initFunction(initQuery);
 
       
     
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/scientific-computing/xarray/intro.html"
+        >
+          
+          Xarray Guide
+        </a>
+
+        
+
+          
+          
+          
+          
+
+          
+
+          <ul class="c-sidebar__sections ">
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/01_data_structures.html"
+                >
+                  
+                  Data Structures
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/02_io.html"
+                >
+                  
+                  Reading and Writing Files
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/03_label_indexing.html"
+                >
+                  
+                  Label-based Indexing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/04_agg.html"
+                >
+                  
+                  Aggregation
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/05_arithmetic.html"
+                >
+                  
+                  Arithmetic
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/06_alignment.html"
+                >
+                  
+                  Alignment
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/07_groupby_resampling_rolling.html"
+                >
+                  
+                  GroupBy, Resampling, Rolling Window Operations
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+          </ul>
+        
+      </li>
+
+      
+    
   </ul>
   <p class="sidebar_footer">Powered by <a href="https://github.com/jupyter/jupyter-book">Jupyter Book</a></p>
 </nav>
@@ -985,6 +1141,70 @@ initFunction(initQuery);
         "categories": [],
         "tags": [],
         "url": "https://ncar-hackathons.github.io/scientific-computing/numpy/intro.html",
+        "teaser":null},{
+        "title": "Data Structures",
+        
+        "excerpt":
+            "Data Structures xarray has 2 fundamental data structures: DataArray, which holds single multi-dimensional variables and its coordinates Dataset, which holds multiple variables that potentially share the same coordinates DataArray The DataArray is xarray’s implementation of a labeled, multi-dimensional array. It has several key properties: Attribute Description data numpy.ndarray or dask.array holding the array’s values. dims dimension names for each axis. For example:(x, y, z) (lat, lon, time). coords a dict-like container of arrays (coordinates) that label each point (e.g., 1-dimensional arrays of numbers, datetime objects or strings) attrs an OrderedDict to hold arbitrary attributes/metadata (such as units) name an arbitrary...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/01_data_structures.html",
+        "teaser":null},{
+        "title": "Reading and Writing Files",
+        
+        "excerpt":
+            "Reading and Writing Files Xarray supports direct serialization and I/O to several file formats including pickle, netCDF, OPeNDAP (read-only), GRIB1/2 (read-only), Zarr, and HDF by integrating with third-party libraries. Additional serialization formats for 1-dimensional data are available through pandas. File types Pickle NetCDF 3/4 RasterIO Zarr PyNio Interoperability Pandas Iris CDMS dask DataFrame Opening xarray datasets Xarray’s open_dataset and open_mfdataset are the primary functions for opening local or remote datasets such as netCDF, GRIB, OpenDap, and HDF. These operations are all supported by third party libraries (engines) for which xarray provides a common interface. !ncdump -h ../data/rasm.nc netcdf rasm {...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/02_io.html",
+        "teaser":null},{
+        "title": "Label-based Indexing",
+        
+        "excerpt":
+            "Label-based Indexing Scientific data is inherently labeled. For example, time series data includes timestamps that label individual periods or points in time, spatial data has coordinates (e.g. longitude, latitude, elevation), and model or laboratory experiments are often identified by unique identifiers. import xarray as xr ds = xr.open_dataset('../data/air_temperature.nc') ds &lt;xarray.Dataset&gt; Dimensions: (lat: 25, lon: 53, time: 2920) Coordinates: * lat (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0 * lon (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0 * time (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00 Data variables: air (time, lat, lon) float32...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/03_label_indexing.html",
+        "teaser":null},{
+        "title": "Aggregation",
+        
+        "excerpt":
+            "Aggregation Xarray supports many of the aggregations methods that numpy has. A partial list includes: all, any, argmax, argmin, max, mean, median, min, prod, sum, std, var. Whereas the numpy syntax would require scalar axes, xarray can use dimension names: import xarray as xr ds = xr.open_dataset(\"../data/air_temperature.nc\") da = ds['air'] da &lt;xarray.DataArray 'air' (time: 2920, lat: 25, lon: 53)&gt; [3869000 values with dtype=float32] Coordinates: * lat (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0 * lon (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0 * time (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00 Attributes:...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/04_agg.html",
+        "teaser":null},{
+        "title": "Arithmetic",
+        
+        "excerpt":
+            "Arithmetic Arithmetic operations with a single DataArray automatically vectorize (like numpy) over all array values: import xarray as xr da = xr.open_dataarray(\"../data/air_temperature.nc\") da &lt;xarray.DataArray 'air' (time: 2920, lat: 25, lon: 53)&gt; [3869000 values with dtype=float32] Coordinates: * lat (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0 * lon (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0 * time (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00 Attributes: long_name: 4xDaily Air temperature at sigma level 995 units: degK precision: 2 GRIB_id: 11 GRIB_name: TMP var_desc: Air temperature dataset: NMC Reanalysis level_desc: Surface statistic: Individual Obs parent_stat:...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/05_arithmetic.html",
+        "teaser":null},{
+        "title": "Alignment",
+        
+        "excerpt":
+            "Alignment xarray enforces alignment between index Coordinates (that is, coordinates with the same name as a dimension, marked by *) on objects used in binary operations. import xarray as xr da = xr.open_dataarray(\"../data/air_temperature.nc\") da &lt;xarray.DataArray 'air' (time: 2920, lat: 25, lon: 53)&gt; [3869000 values with dtype=float32] Coordinates: * lat (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0 * lon (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0 * time (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00 Attributes: long_name: 4xDaily Air temperature at sigma level 995 units: degK precision: 2 GRIB_id: 11 GRIB_name: TMP var_desc:...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/06_alignment.html",
+        "teaser":null},{
+        "title": "GroupBy, Resampling, Rolling Window Operations",
+        
+        "excerpt":
+            "GroupBy Operations xarray supports “group by” operations with the same API as pandas to implement the split-apply-combine strategy: Split your data into multiple independent groups. Apply some function to each group. Combine your groups back into a single data object. Group by operations work on both Dataset and DataArray objects. Most of the examples focus on grouping by a single one-dimensional variable, although support for grouping over a multi-dimensional variable is also supported: Using groupby to calculate a monthly climatology: import xarray as xr da = xr.open_dataarray(\"../data/air_temperature.nc\") da_climatology = da.groupby('time.month').mean('time') da_climatology &lt;xarray.DataArray 'air' (month: 12, lat: 25, lon: 53)&gt; array([[[246.34987,...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/07_groupby_resampling_rolling.html",
+        "teaser":null},{
+        "title": "Xarray Guide",
+        
+        "excerpt":
+            "Introduction Unlabeled, N-dimensional arrays of numbers (e.g., NumPy’s ndarray) are the most widely used data structure in scientific computing. However, they lack a meaningful representation of the metadata associated with their data. Implementing such functionality is left to individual users and domain-specific packages. xarry expands on the capabilities of NumPy arrays, providing a lot of streamline data manipulation. xarray’s interface is based largely on the netCDF data model (variables, attributes, and dimensions), but it goes beyond the traditional netCDF interfaces to provide functionality similar to netCDF-java’s Common Data Model (CDM). xarray is a useful tool for parallelizing and working with...",
+        "categories": [],
+        "tags": [],
+        "url": "https://ncar-hackathons.github.io/scientific-computing/xarray/intro.html",
         "teaser":null},]
 
 </script>

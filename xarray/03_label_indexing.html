@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+
+  <title>Label-based Indexing</title>
+  <meta name="description" content="Label-based Indexing">
+
+  <link rel="canonical" href="https://ncar-hackathons.github.io/scientific-computing/xarray/03_label_indexing.html">
+  <link rel="alternate" type="application/rss+xml" title="The Python Scientific Computing Ecosystem Guide" href="https://ncar-hackathons.github.io/scientific-computing/feed.xml">
+
+  <meta property="og:url"         content="https://ncar-hackathons.github.io/scientific-computing/xarray/03_label_indexing.html" />
+<meta property="og:type"        content="article" />
+<meta property="og:title"       content="Label-based Indexing" />
+<meta property="og:description" content="Label-based Indexing" />
+<meta property="og:image"       content="" />
+
+
+  <script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage":
+    "https://ncar-hackathons.github.io/scientific-computing/xarray/03_label_indexing.html",
+  "headline":
+    "Label-based Indexing",
+  "datePublished":
+    "2019-05-18T20:06:44+00:00",
+  "dateModified":
+    "2019-05-18T20:06:44+00:00",
+  "description":
+    "Label-based Indexing",
+  "author": {
+    "@type": "Person",
+    "name": "The XDev Team"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Data 100 at UC Berkeley",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ncar-hackathons.github.io/scientific-computing",
+      "width": 60,
+      "height": 60
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://ncar-hackathons.github.io/scientific-computing",
+    "height": 60,
+    "width": 60
+  }
+}
+
+  </script>
+  <link rel="stylesheet" href="/scientific-computing/assets/css/styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css ">
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#efae0a"> -->
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#233947">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="/scientific-computing/images/logo/favicon.ico">
+
+  <!-- MathJax Config -->
+  <!-- Allow inline math using $ and automatically break long math lines -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    CommonHTML: {
+        linebreaks: {
+            automatic: true,
+        },
+    },
+});
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML' async></script>
+
+  <!-- DOM updating function -->
+  <script>
+const runWhenDOMLoaded = cb => {
+  if (document.readyState != 'loading') {
+    cb()
+  } else if (document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', cb)
+  } else {
+    document.attachEvent('onreadystatechange', function() {
+      if (document.readyState == 'complete') cb()
+    })
+  }
+}
+
+// Helper function to init things quickly
+initFunction = function(myfunc) {
+  runWhenDOMLoaded(myfunc);
+  document.addEventListener('turbolinks:load', myfunc);
+};
+</script>
+
+
+  <!-- Define some javascript variables that will be useful in other javascript -->
+  <script>
+    const site_basename = '/scientific-computing';
+  </script>
+
+  <!-- Add AnchorJS to let headers be linked -->
+  <script src="/scientific-computing/assets/js/anchor.min.js"  type="text/javascript"></script>
+  <script>
+
+initFunction(function () {
+    anchors.add("main h1, main h2, main h3, main h4")
+});
+
+</script>
+
+
+  <!-- Include Turbolinks to make page loads fast -->
+  <!-- https://github.com/turbolinks/turbolinks -->
+  <script src="/scientific-computing/assets/js/turbolinks.js" async></script>
+  <meta name="turbolinks-cache-control" content="no-cache">
+
+  <!-- Load nbinteract for widgets -->
+  
+
+
+  <!-- Load Thebelab for interactive widgets -->
+  <!-- Include Thebelab for interactive code if it's enabled -->
+
+
+<!-- Display Thebelab button in each code cell -->
+<script>
+/**
+ * Set up thebelab button for code blocks
+ */
+
+const thebelabCellButton = id =>
+  `<a id="thebelab-cell-button-${id}" class="btn thebebtn o-tooltip--left" data-tooltip="Interactive Mode">
+    <img src="/scientific-computing/assets/images/edit-button.svg" alt="Start interactive mode">
+  </a>`
+
+
+const addThebelabButtonToCodeCells =  () => {
+
+  const codeCells = document.querySelectorAll('div.input_area > div.highlighter-rouge:not(.output) pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("thebelab-cell-button-" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', thebelabCellButton(id));
+    }
+  })
+}
+
+initFunction(addThebelabButtonToCodeCells);
+</script>
+
+
+
+<script type="text/x-thebe-config">
+    {
+      requestKernel: true,
+      binderOptions: {
+        repo: 'ncar-hackathons/scientific-computing',
+        ref: 'master',
+      },
+      codeMirrorConfig: {
+        theme: "abcdef"
+      },
+      kernelOptions: {
+        name: 'python3',
+      }
+    }
+</script>
+<script src="https://unpkg.com/thebelab@0.4.0/lib/index.js"></script>
+<script>
+    /**
+     * Add attributes to Thebelab blocks
+     */
+
+    const initThebelab = () => {
+        const addThebelabToCodeCells = () => {
+            console.log("Adding thebelab to code cells...");
+            // If Thebelab hasn't loaded, wait a bit and try again. This
+            // happens because we load ClipboardJS asynchronously.
+            if (window.thebelab === undefined) {
+                setTimeout(addThebelabToCodeCells, 250)
+            return
+            }
+
+            // If we already detect a Thebelab cell, don't re-run
+            if (document.querySelectorAll('div.thebelab-cell').length > 0) {
+                return;
+            }
+
+            // Find all code cells, replace with Thebelab interactive code cells
+            const codeCells = document.querySelectorAll('.input_area pre')
+            codeCells.forEach((codeCell, index) => {
+                const id = codeCellId(index)
+                codeCell.setAttribute('data-executable', 'true')
+
+                // Figure out the language it uses and add this too
+                var parentDiv = codeCell.parentElement.parentElement;
+                var arrayLength = parentDiv.classList.length;
+                for (var ii = 0; ii < arrayLength; ii++) {
+                    var parts = parentDiv.classList[ii].split('language-');
+                    if (parts.length === 2) {
+                        // If found, assign dataLanguage and break the loop
+                        var dataLanguage = parts[1];
+                        break;
+                    }
+                }
+                codeCell.setAttribute('data-language', dataLanguage)
+
+                // If the code cell is hidden, show it
+                var inputCheckbox = document.querySelector(`input#hidebtn${codeCell.id}`);
+                if (inputCheckbox !== null) {
+                    setCodeCellVisibility(inputCheckbox, 'visible');
+                }
+            });
+
+            // Remove the event listener from the page so keyboard press doesn't
+            // Change page
+            document.removeEventListener('keydown', initPageNav)
+            keyboardListener = false;
+
+            // Init thebelab
+            thebelab.bootstrap();
+
+            // Remove copy buttons since they won't work anymore
+            const copyAndThebeButtons = document.querySelectorAll('.copybtn, .thebebtn')
+            copyAndThebeButtons.forEach((button, index) => {
+                button.remove();
+            });
+
+            // Remove outputs since they'll be stale
+            const outputs = document.querySelectorAll('.output *, .output')
+            outputs.forEach((output, index) => {
+                output.remove();
+            });
+        }
+
+        // Add event listener for the function to modify code cells
+        const thebelabButtons = document.querySelectorAll('[id^=thebelab], [id$=thebelab]')
+        thebelabButtons.forEach((thebelabButton,index) => {
+            if (thebelabButton === null) {
+                setTimeout(initThebelab, 250)
+                return
+            };
+            thebelabButton.addEventListener('click', addThebelabToCodeCells);
+        });
+    }
+
+    // Initialize Thebelab
+    initFunction(initThebelab);
+</script>
+
+
+
+  <!-- Load the auto-generating TOC -->
+  <script src="/scientific-computing/assets/js/tocbot.min.js"  type="text/javascript"></script>
+  <script>
+var initToc = function () {
+  tocbot.init({
+    tocSelector: 'nav.onthispage',
+    contentSelector: '.c-textbook__content',
+    headingSelector: 'h2, h3',
+    orderedList: false,
+    collapseDepth: 6,
+    listClass: 'toc__menu',
+    activeListItemClass: "",  // Not using
+    activeLinkClass: "", // Not using
+  });
+  tocbot.refresh();
+}
+initFunction(initToc);
+</script>
+
+
+  <!-- Google analytics -->
+  <script src="/scientific-computing/assets/js/ga.js" async></script>
+
+  <!-- Clipboard copy button -->
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" async></script>
+
+  <!-- Load JS that depends on site variables -->
+  <script>
+/**
+ * Set up copy/paste for code blocks
+ */
+const codeCellId = index => `codecell${index}`
+
+const clipboardButton = id =>
+  `<a id="copy-button-${id}" class="btn copybtn o-tooltip--left" data-tooltip="Copy" data-clipboard-target="#${id}">
+    <img src="/scientific-computing/assets/images/copy-button.svg" alt="Copy to clipboard">
+  </a>`
+
+// Clears selected text since ClipboardJS will select the text when copying
+const clearSelection = () => {
+  if (window.getSelection) {
+    window.getSelection().removeAllRanges()
+  } else if (document.selection) {
+    document.selection.empty()
+  }
+}
+
+// Changes tooltip text for two seconds, then changes it back
+const temporarilyChangeTooltip = (el, newText) => {
+  const oldText = el.getAttribute('data-tooltip')
+  el.setAttribute('data-tooltip', newText)
+  setTimeout(() => el.setAttribute('data-tooltip', oldText), 2000)
+}
+
+const addCopyButtonToCodeCells = () => {
+  // If ClipboardJS hasn't loaded, wait a bit and try again. This
+  // happens because we load ClipboardJS asynchronously.
+  if (window.ClipboardJS === undefined) {
+    setTimeout(addCopyButtonToCodeCells, 250)
+    return
+  }
+
+  const codeCells = document.querySelectorAll('div.c-textbook__content > div.highlighter-rouge > div.highlight > pre, div.input_area pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    if (document.getElementById("copy-button" + id) == null) {
+      codeCell.insertAdjacentHTML('afterend', clipboardButton(id));
+    }
+  })
+
+  const clipboard = new ClipboardJS('.copybtn')
+  clipboard.on('success', event => {
+    clearSelection()
+    temporarilyChangeTooltip(event.trigger, 'Copied!')
+  })
+
+  clipboard.on('error', event => {
+    temporarilyChangeTooltip(event.trigger, 'Failed to copy')
+  })
+
+  // Get rid of clipboard before the next page visit to avoid memory leak
+  document.addEventListener('turbolinks:before-visit', () =>
+    clipboard.destroy()
+  )
+}
+
+initFunction(addCopyButtonToCodeCells);
+</script>
+
+
+  <!-- Hide cell code -->
+  
+<script>
+/**
+Add buttons to hide code cells
+*/
+
+
+var setCodeCellVisibility = function(inputField, kind) {
+    // Update the image and class for hidden
+    var id = inputField.getAttribute('data-id');
+    var codeCell = document.querySelector(`#${id} div.highlight`);
+
+    if (kind === "visible") {
+        codeCell.classList.remove('hidden');
+        inputField.checked = true;
+    } else {
+        codeCell.classList.add('hidden');
+        inputField.checked = false;
+    }
+}
+
+var toggleCodeCellVisibility = function (event) {
+    // The label is clicked, and now we decide what to do based on the input field's clicked status
+    if (event.target.tagName === "LABEL") {
+        var inputField = event.target.previousElementSibling;
+    } else {
+        // It is the span inside the target
+        var inputField = event.target.parentElement.previousElementSibling;
+    }
+
+    if (inputField.checked === true) {
+        setCodeCellVisibility(inputField, "visible");
+    } else {
+        setCodeCellVisibility(inputField, "hidden");
+    }
+}
+
+
+// Button constructor
+const hideCodeButton = id => `<input class="hidebtn" type="checkbox" id="hidebtn${id}" data-id="${id}"><label title="Toggle cell" for="hidebtn${id}" class="plusminus"><span class="pm_h"></span><span class="pm_v"></span></label>`
+
+var addHideButton = function () {
+  // If a hide button is already added, don't add another
+  if (document.querySelector('div.hidecode input') !== null) {
+      return;
+  }
+
+  // Find the input cells and add a hide button
+  document.querySelectorAll('div.input_area').forEach(function (item, index) {
+    if (!item.classList.contains("hidecode")) {
+        // Skip the cell if it doesn't have a hidecode class
+        return;
+    }
+
+    const id = codeCellId(index)
+    item.setAttribute('id', id);
+    // Insert the button just inside the end of the next div
+    item.querySelector('div').insertAdjacentHTML('beforeend', hideCodeButton(id))
+
+    // Set up the visibility toggle
+    hideLink = document.querySelector(`#${id} div.highlight + input + label`);
+    hideLink.addEventListener('click', toggleCodeCellVisibility)
+  });
+}
+
+
+// Initialize the hide buttos
+var initHiddenCells = function () {
+    // Add hide buttons to the cells
+    addHideButton();
+
+    // Toggle the code cells that should be hidden
+    document.querySelectorAll('div.hidecode input').forEach(function (item) {
+        setCodeCellVisibility(item, 'hidden');
+        item.checked = true;
+    })
+}
+
+initFunction(initHiddenCells);
+
+</script>
+
+
+
+  <!-- Load custom website scripts -->
+  <script src="/scientific-computing/assets/js/scripts.js" async></script>
+
+  <!-- Load custom user CSS and JS  -->
+  <script src="/scientific-computing/assets/custom/custom.js" async></script>
+  <link rel="stylesheet" href="/scientific-computing/assets/custom/custom.css">
+
+  <!-- Update interact links w/ REST param, is defined in includes so we can use templates -->
+  
+<script>
+/**
+  * To auto-embed hub URLs in interact links if given in a RESTful fashion
+ */
+
+function getJsonFromUrl(url) {
+  var query = url.split('?');
+  if (query.length < 2) {
+    // No queries so just return false
+    return false;
+  }
+  query = query[1];
+  // Collect REST params into a dictionary
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+
+function dict2param(dict) {
+    params = Object.keys(dict).map(function(k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(dict[k])
+    });
+    return params.join('&')
+}
+
+// Parse a Binder URL, converting it to the string needed for JupyterHub
+function binder2Jupyterhub(url) {
+  newUrl = {};
+  parts = url.split('v2/gh/')[1];
+  // Grab the base repo information
+  repoinfo = parts.split('?')[0];
+  var [org, repo, ref] = repoinfo.split('/');
+  newUrl['repo'] = ['https://github.com', org, repo].join('/');
+  newUrl['branch'] = ref
+  // Grab extra parameters passed
+  params = getJsonFromUrl(url);
+  if (params['filepath'] !== undefined) {
+    newUrl['subPath'] = params['filepath']
+  }
+  return dict2param(newUrl);
+}
+
+// Filter out potentially unsafe characters to prevent xss
+function safeUrl(url)
+{
+   return String(encodeURIComponent(url))
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
+
+function addParamToInternalLinks(hub) {
+  var links = document.querySelectorAll("a").forEach(function(link) {
+    var href = link.href;
+    // If the link is an internal link...
+    if (href.search("https://ncar-hackathons.github.io") !== -1 || href.startsWith('/') || href.search("127.0.0.1:") !== -1) {
+      // Assume we're an internal link, add the hub param to it
+      var params = getJsonFromUrl(href);
+      if (params !== false) {
+        // We have REST params, so append a new one
+        params['jupyterhub'] = hub;
+      } else {
+        // Create the REST params
+        params = {'jupyterhub': hub};
+      }
+      // Update the link
+      var newHref = href.split('?')[0] + '?' + dict2param(params);
+      link.setAttribute('href', decodeURIComponent(newHref));
+    }
+  });
+  return false;
+}
+
+
+// Update interact links
+function updateInteractLink() {
+    // hack to make this work since it expects a ? in the URL
+    rest = getJsonFromUrl("?" + location.search.substr(1));
+    jupyterHubUrl = rest['jupyterhub'];
+    var hubType = null;
+    var hubUrl = null;
+    if (jupyterHubUrl !== undefined) {
+      hubType = 'jupyterhub';
+      hubUrl = jupyterHubUrl;
+    }
+
+    if (hubType !== null) {
+      // Sanitize the hubUrl
+      hubUrl = safeUrl(hubUrl);
+
+      // Add HTTP text if omitted
+      if (hubUrl.indexOf('http') < 0) {hubUrl = 'http://' + hubUrl;}
+      var interactButtons = document.querySelectorAll("button.interact-button")
+      var lastButton = interactButtons[interactButtons.length-1];
+      var link = lastButton.parentElement;
+
+      // If we've already run this, skip the link updating
+      if (link.nextElementSibling !== null) {
+        return;
+      }
+
+      // Update the link and add context div
+      var href = link.getAttribute('href');
+      if (lastButton.id === 'interact-button-binder') {
+        // If binder links exist, we need to re-work them for jupyterhub
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // If localhost, assume we're working from a local Jupyter server and remove `/hub`
+          first = [hubUrl, 'git-sync'].join('/')
+        } else {
+          first = [hubUrl, 'hub', 'user-redirect', 'git-sync'].join('/')
+        }
+        href = first + '?' + binder2Jupyterhub(href);
+      } else {
+        // If interact button isn't binderhub, assume it's jupyterhub
+        // If JupyterHub links, we only need to replace the hub url
+        href = href.replace("", hubUrl);
+        if (hubUrl.indexOf('http%3A%2F%2Flocalhost') > -1) {
+          // Assume we're working from a local Jupyter server and remove `/hub`
+          href = href.replace("/hub/user-redirect", "");
+        }
+      }
+      link.setAttribute('href', decodeURIComponent(href));
+
+      // Add text after interact link saying where we're launching
+      hubUrlNoHttp = decodeURIComponent(hubUrl).replace('http://', '').replace('https://', '');
+      link.insertAdjacentHTML('afterend', '<div class="interact-context">on ' + hubUrlNoHttp + '</div>');
+
+      // Update internal links so we retain the hub url
+      addParamToInternalLinks(hubUrl);
+    }
+}
+
+runWhenDOMLoaded(updateInteractLink)
+document.addEventListener('turbolinks:load', updateInteractLink)
+</script>
+
+
+
+  <!-- Lunr search code - will only be executed on the /search page -->
+  <script src="/scientific-computing/assets/js/lunr/lunr.min.js" type="text/javascript"></script>
+  <script>var initQuery = function() {
+  // See if we have a search box
+  var searchInput = document.querySelector('input#lunr_search');
+  if (searchInput === null) {
+    return;
+  }
+
+  // Function to parse our lunr cache
+  var idx = lunr(function () {
+    this.field('title')
+    this.field('excerpt')
+    this.field('categories')
+    this.field('tags')
+    this.ref('id')
+
+    this.pipeline.remove(lunr.trimmer)
+
+    for (var item in store) {
+      this.add({
+        title: store[item].title,
+        excerpt: store[item].excerpt,
+        categories: store[item].categories,
+        tags: store[item].tags,
+        id: item
+      })
+    }
+  });
+
+  // Run search upon keyup
+  searchInput.addEventListener('keyup', function () {
+    var resultdiv = document.querySelector('#results');
+    var query = document.querySelector("input#lunr_search").value.toLowerCase();
+    var result =
+      idx.query(function (q) {
+        query.split(lunr.tokenizer.separator).forEach(function (term) {
+          q.term(term, { boost: 100 })
+          if(query.lastIndexOf(" ") != query.length-1){
+            q.term(term, {  usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
+          }
+          if (term != ""){
+            q.term(term, {  usePipeline: false, editDistance: 1, boost: 1 })
+          }
+        })
+      });
+
+      // Empty the results div
+      while (resultdiv.firstChild) {
+        resultdiv.removeChild(resultdiv.firstChild);
+      }
+
+    resultdiv.insertAdjacentHTML('afterbegin', '<p class="results__found">'+result.length+' Result(s) found</p>');
+    for (var item in result) {
+      var ref = result[item].ref;
+      if(store[ref].teaser){
+        var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<div class="archive__item-teaser">'+
+                '<img src="'+store[ref].teaser+'" alt="">'+
+              '</div>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      else{
+    	  var searchitem =
+          '<div class="list__item">'+
+            '<article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">'+
+              '<h2 class="archive__item-title" itemprop="headline">'+
+                '<a href="'+store[ref].url+'" rel="permalink">'+store[ref].title+'</a>'+
+              '</h2>'+
+              '<p class="archive__item-excerpt" itemprop="description">'+store[ref].excerpt.split(" ").splice(0,20).join(" ")+'...</p>'+
+            '</article>'+
+          '</div>';
+      }
+      resultdiv.insertAdjacentHTML('beforeend', searchitem);
+    }
+  });
+};
+
+initFunction(initQuery);
+</script>
+</head>
+
+  <body>
+    <!-- .js-show-sidebar shows sidebar by default -->
+    <div id="js-textbook" class="c-textbook js-show-sidebar">
+      
+
+
+
+<nav id="js-sidebar" class="c-textbook__sidebar">
+  <a href="https://ncar-hackathons.github.io/scientific-computing"><img src="/scientific-computing/images/logo/ncar-mesa-lab.png" class="textbook_logo" id="sidebar-logo" data-turbolinks-permanent/></a>
+  <h2 class="c-sidebar__title">The Python Scientific Computing Ecosystem Guide</h2>
+  <ul class="c-sidebar__chapters">
+    
+      
+      
+
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/scientific-computing/intro.html"
+        >
+          
+          Home
+        </a>
+
+        
+      </li>
+
+      
+    
+      
+      
+        <li class="c-sidebar__chapter"><a class="c-sidebar__entry" href="/scientific-computing/search.html">Search</a></li>
+        
+      
+      
+
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/scientific-computing/numpy/intro.html"
+        >
+          
+          NumPy Guide
+        </a>
+
+        
+
+          
+          
+          
+          
+
+          
+
+          <ul class="c-sidebar__sections ">
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/01_numpy_array_object.html"
+                >
+                  
+                  The NumPy Array Object
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/02_memory_layout.html"
+                >
+                  
+                  Memory layout of multi-dimensional arrays
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/03_array_creation.html"
+                >
+                  
+                  Array Creation
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/04_indexing_and_slicing.html"
+                >
+                  
+                  Indexing and Slicing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/05_reshaping_and_resizing.html"
+                >
+                  
+                  Reshaping and Resizing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/06_vectorized_expressions.html"
+                >
+                  
+                  Vectorized Expressions
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/numpy/extra.html"
+                >
+                  
+                  Summary and Further Reading
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+          </ul>
+        
+      </li>
+
+      
+    
+      
+      
+        <li class="c-sidebar__divider"></li>
+        
+      
+      
+
+      
+      
+
+      
+      
+      <li class="c-sidebar__chapter">
+        <a class="c-sidebar__entry "
+          href="/scientific-computing/xarray/intro.html"
+        >
+          
+          Xarray Guide
+        </a>
+
+        
+
+          
+          
+          
+          
+
+          
+
+          <ul class="c-sidebar__sections ">
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/01_data_structures.html"
+                >
+                  
+                  Data Structures
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/02_io.html"
+                >
+                  
+                  Reading and Writing Files
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry c-sidebar__entry--active"
+                  href="/scientific-computing/xarray/03_label_indexing.html"
+                >
+                  
+                  Label-based Indexing
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/04_agg.html"
+                >
+                  
+                  Aggregation
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/05_arithmetic.html"
+                >
+                  
+                  Arithmetic
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/06_alignment.html"
+                >
+                  
+                  Alignment
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+              
+              
+
+              <li class="c-sidebar__section">
+                <a class="c-sidebar__entry "
+                  href="/scientific-computing/xarray/07_groupby_resampling_rolling.html"
+                >
+                  
+                  GroupBy, Resampling, Rolling Window Operations
+                </a>
+
+                
+                
+
+              </li>
+              
+            
+          </ul>
+        
+      </li>
+
+      
+    
+  </ul>
+  <p class="sidebar_footer">Powered by <a href="https://github.com/jupyter/jupyter-book">Jupyter Book</a></p>
+</nav>
+
+      
+      <!-- Empty sidebar placeholder that we'll auto-fill with javascript -->
+      <aside class="sidebar__right">
+          <header><h4 class="nav__title"><i class="fa fa-list"></i>   On this page</h4></header>
+          <nav class="onthispage">
+          </nav>
+      </aside>
+      
+      <main class="c-textbook__page" tabindex="-1">
+          <div class="o-wrapper">
+            <div class="c-sidebar-toggle">
+  <!-- We show the sidebar by default so we use .is-active -->
+  <button
+    id="js-sidebar-toggle"
+    class="hamburger hamburger--arrowalt is-active"
+  >
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+    <span class="c-sidebar-toggle__label">Toggle Sidebar</span>
+  </button>
+</div>
+
+            
+<div class="buttons">
+<a href="/scientific-computing/content/xarray/03_label_indexing.ipynb" download>
+<button id="interact-button-download" class="interact-button">Download</button>
+</a>
+
+
+<button id="interact-button-thebelab" class="interact-button">Thebelab</button>
+
+
+
+
+
+
+
+
+
+
+
+<a href="https://binder.pangeo.io/v2/gh/ncar-hackathons/scientific-computing/master?urlpath=lab/tree/content%2Fxarray%2F03_label_indexing.ipynb"><button class="interact-button" id="interact-button-binder"><img class="interact-button-logo" src="/scientific-computing/assets/images/logo_binder.svg" alt="Interact" />Interact</button></a>
+
+
+
+</div>
+
+
+            <div class="c-textbook__content">
+              <h1 id="label-based-indexing">Label-based Indexing</h1>
+
+<p>Scientific data is inherently labeled. For example, time series data includes timestamps that label individual periods or points in time, spatial data has coordinates (e.g. longitude, latitude, elevation), and model or laboratory experiments are often identified by unique identifiers.</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="n">xr</span>
+</code></pre></div>    </div>
+  </div>
+
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s">'../data/air_temperature.nc'</span><span class="p">)</span>
+<span class="n">ds</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.Dataset&gt;
+Dimensions:  (lat: 25, lon: 53, time: 2920)
+Coordinates:
+  * lat      (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0
+  * lon      (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Data variables:
+    air      (time, lat, lon) float32 ...
+Attributes:
+    Conventions:  COARDS
+    title:        4x daily NMC reanalysis (1948)
+    description:  Data is from NMC initialized reanalysis\n(4x/day).  These a...
+    platform:     Model
+    references:   http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanaly...
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<h2 id="numpy-positional-indexing">NumPy Positional Indexing</h2>
+
+<p>When working with numpy, indexing is done by position (slices/ranges/scalars).</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">t</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s">'air'</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="c"># numpy array </span>
+<span class="n">t</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([[[241.2    , 242.5    , 243.5    , ..., 232.79999, 235.5    ,
+         238.59999],
+        [243.79999, 244.5    , 244.7    , ..., 232.79999, 235.29999,
+         239.29999],
+        [250.     , 249.79999, 248.89   , ..., 233.2    , 236.39   ,
+         241.7    ],
+        ...,
+        [296.6    , 296.19998, 296.4    , ..., 295.4    , 295.1    ,
+         294.69998],
+        [295.9    , 296.19998, 296.79   , ..., 295.9    , 295.9    ,
+         295.19998],
+        [296.29   , 296.79   , 297.1    , ..., 296.9    , 296.79   ,
+         296.6    ]],
+
+       [[242.09999, 242.7    , 243.09999, ..., 232.     , 233.59999,
+         235.79999],
+        [243.59999, 244.09999, 244.2    , ..., 231.     , 232.5    ,
+         235.7    ],
+        [253.2    , 252.89   , 252.09999, ..., 230.79999, 233.39   ,
+         238.5    ],
+        ...,
+        [296.4    , 295.9    , 296.19998, ..., 295.4    , 295.1    ,
+         294.79   ],
+        [296.19998, 296.69998, 296.79   , ..., 295.6    , 295.5    ,
+         295.1    ],
+        [296.29   , 297.19998, 297.4    , ..., 296.4    , 296.4    ,
+         296.6    ]],
+
+       [[242.29999, 242.2    , 242.29999, ..., 234.29999, 236.09999,
+         238.7    ],
+        [244.59999, 244.39   , 244.     , ..., 230.29999, 232.     ,
+         235.7    ],
+        [256.19998, 255.5    , 254.2    , ..., 231.2    , 233.2    ,
+         238.2    ],
+        ...,
+        [295.6    , 295.4    , 295.4    , ..., 296.29   , 295.29   ,
+         295.     ],
+        [296.19998, 296.5    , 296.29   , ..., 296.4    , 296.     ,
+         295.6    ],
+        [296.4    , 296.29   , 296.4    , ..., 297.     , 297.     ,
+         296.79   ]],
+
+       ...,
+
+       [[243.48999, 242.98999, 242.09   , ..., 244.18999, 244.48999,
+         244.89   ],
+        [249.09   , 248.98999, 248.59   , ..., 240.59   , 241.29   ,
+         242.68999],
+        [262.69   , 262.19   , 261.69   , ..., 239.39   , 241.68999,
+         245.18999],
+        ...,
+        [294.79   , 295.29   , 297.49   , ..., 295.49   , 295.38998,
+         294.69   ],
+        [296.79   , 297.88998, 298.29   , ..., 295.49   , 295.49   ,
+         294.79   ],
+        [298.19   , 299.19   , 298.79   , ..., 296.09   , 295.79   ,
+         295.79   ]],
+
+       [[245.79   , 244.79   , 243.48999, ..., 243.29   , 243.98999,
+         244.79   ],
+        [249.89   , 249.29   , 248.48999, ..., 241.29   , 242.48999,
+         244.29   ],
+        [262.38998, 261.79   , 261.29   , ..., 240.48999, 243.09   ,
+         246.89   ],
+        ...,
+        [293.69   , 293.88998, 295.38998, ..., 295.09   , 294.69   ,
+         294.29   ],
+        [296.29   , 297.19   , 297.59   , ..., 295.29   , 295.09   ,
+         294.38998],
+        [297.79   , 298.38998, 298.49   , ..., 295.69   , 295.49   ,
+         295.19   ]],
+
+       [[245.09   , 244.29   , 243.29   , ..., 241.68999, 241.48999,
+         241.79   ],
+        [249.89   , 249.29   , 248.39   , ..., 239.59   , 240.29   ,
+         241.68999],
+        [262.99   , 262.19   , 261.38998, ..., 239.89   , 242.59   ,
+         246.29   ],
+        ...,
+        [293.79   , 293.69   , 295.09   , ..., 295.29   , 295.09   ,
+         294.69   ],
+        [296.09   , 296.88998, 297.19   , ..., 295.69   , 295.69   ,
+         295.19   ],
+        [297.69   , 298.09   , 298.09   , ..., 296.49   , 296.19   ,
+         295.69   ]]], dtype=float32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">t</span><span class="o">.</span><span class="n">shape</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(2920, 25, 53)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># extract a time-series for one spatial location</span>
+<span class="n">t</span><span class="p">[:,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>array([295.  , 294.4 , 294.5 , ..., 297.29, 297.79, 297.99], dtype=float32)
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<p><strong>but wait, what labels go with 10 and 20? Was that lat/lon or lon/lat? Where are the timestamps that go along with this time-series?</strong></p>
+
+<h2 id="indexing-with-xarray">Indexing with xarray</h2>
+
+<p>xarray offers extremely flexible indexing routines that combine the best features of NumPy and pandas for data selection.</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">da</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s">'air'</span><span class="p">]</span> <span class="c"># Extract data array</span>
+<span class="n">da</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920, lat: 25, lon: 53)&gt;
+array([[[241.2    , 242.5    , ..., 235.5    , 238.59999],
+        [243.79999, 244.5    , ..., 235.29999, 239.29999],
+        ...,
+        [295.9    , 296.19998, ..., 295.9    , 295.19998],
+        [296.29   , 296.79   , ..., 296.79   , 296.6    ]],
+
+       [[242.09999, 242.7    , ..., 233.59999, 235.79999],
+        [243.59999, 244.09999, ..., 232.5    , 235.7    ],
+        ...,
+        [296.19998, 296.69998, ..., 295.5    , 295.1    ],
+        [296.29   , 297.19998, ..., 296.4    , 296.6    ]],
+
+       ...,
+
+       [[245.79   , 244.79   , ..., 243.98999, 244.79   ],
+        [249.89   , 249.29   , ..., 242.48999, 244.29   ],
+        ...,
+        [296.29   , 297.19   , ..., 295.09   , 294.38998],
+        [297.79   , 298.38998, ..., 295.49   , 295.19   ]],
+
+       [[245.09   , 244.29   , ..., 241.48999, 241.79   ],
+        [249.89   , 249.29   , ..., 240.29   , 241.68999],
+        ...,
+        [296.09   , 296.88998, ..., 295.69   , 295.19   ],
+        [297.69   , 298.09   , ..., 296.19   , 295.69   ]]], dtype=float32)
+Coordinates:
+  * lat      (lat) float32 75.0 72.5 70.0 67.5 65.0 ... 25.0 22.5 20.0 17.5 15.0
+  * lon      (lon) float32 200.0 202.5 205.0 207.5 ... 322.5 325.0 327.5 330.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<ul>
+  <li><strong>NumPy style indexing still works (but preserves the labels/metadata)</strong></li>
+</ul>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">da</span><span class="p">[:,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920)&gt;
+array([295.  , 294.4 , 294.5 , ..., 297.29, 297.79, 297.99], dtype=float32)
+Coordinates:
+    lat      float32 25.0
+    lon      float32 300.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<ul>
+  <li><strong>Positional indexing using dimension names</strong></li>
+</ul>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">da</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920)&gt;
+array([295.  , 294.4 , 294.5 , ..., 297.29, 297.79, 297.99], dtype=float32)
+Coordinates:
+    lat      float32 25.0
+    lon      float32 300.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<ul>
+  <li><strong>Label-based indexing</strong></li>
+</ul>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="mf">200.</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920)&gt;
+array([277.29, 276.29, 276.  , ..., 277.59, 277.59, 277.59], dtype=float32)
+Coordinates:
+    lat      float32 50.0
+    lon      float32 200.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<ul>
+  <li><strong>Nearest Neighbor Lookups</strong></li>
+</ul>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">52.25</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="mf">251.8998</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920)&gt;
+array([262.69998, 263.19998, 270.9    , ..., 264.19   , 265.19   , 266.99   ],
+      dtype=float32)
+Coordinates:
+    lat      float32 52.5
+    lon      float32 252.5
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<ul>
+  <li><strong>All of these indexing methods work on the dataset too:</strong></li>
+</ul>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">52.25</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="mf">251.8998</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.Dataset&gt;
+Dimensions:  (time: 2920)
+Coordinates:
+    lat      float32 52.5
+    lon      float32 252.5
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Data variables:
+    air      (time) float32 262.69998 263.19998 270.9 ... 264.19 265.19 266.99
+Attributes:
+    Conventions:  COARDS
+    title:        4x daily NMC reanalysis (1948)
+    description:  Data is from NMC initialized reanalysis\n(4x/day).  These a...
+    platform:     Model
+    references:   http://www.esrl.noaa.gov/psd/data/gridded/data.ncep.reanaly...
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<h2 id="vectorized-indexing">Vectorized Indexing</h2>
+
+<p>Like numpy and pandas, xarray supports indexing many array elements at once in a vectorized manner:</p>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># generate a coordinates for a transect of points</span>
+<span class="n">lat_points</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">([</span><span class="mi">52</span><span class="p">,</span> <span class="mf">52.5</span><span class="p">,</span> <span class="mi">53</span><span class="p">],</span> <span class="n">dims</span><span class="o">=</span><span class="s">'points'</span><span class="p">)</span>
+<span class="n">lon_points</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">([</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">],</span> <span class="n">dims</span><span class="o">=</span><span class="s">'points'</span><span class="p">)</span>
+<span class="n">lat_points</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray (points: 3)&gt;
+array([52. , 52.5, 53. ])
+Dimensions without coordinates: points
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lon_points</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray (points: 3)&gt;
+array([250, 250, 250])
+Dimensions without coordinates: points
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># nearest neighbor selection along the transect</span>
+<span class="n">da</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">lat_points</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">lon_points</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">'nearest'</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+
+      <div class="output_data_text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;xarray.DataArray 'air' (time: 2920, points: 3)&gt;
+array([[269.5    , 269.5    , 269.5    ],
+       [269.29   , 269.29   , 269.29   ],
+       [273.69998, 273.69998, 273.69998],
+       ...,
+       [267.49   , 267.49   , 267.49   ],
+       [269.29   , 269.29   , 269.29   ],
+       [268.69   , 268.69   , 268.69   ]], dtype=float32)
+Coordinates:
+    lat      (points) float32 52.5 52.5 52.5
+    lon      (points) float32 250.0 250.0 250.0
+  * time     (time) datetime64[ns] 2013-01-01 ... 2014-12-31T18:00:00
+Dimensions without coordinates: points
+Attributes:
+    long_name:     4xDaily Air temperature at sigma level 995
+    units:         degK
+    precision:     2
+    GRIB_id:       11
+    GRIB_name:     TMP
+    var_desc:      Air temperature
+    dataset:       NMC Reanalysis
+    level_desc:    Surface
+    statistic:     Individual Obs
+    parent_stat:   Other
+    actual_range:  [185.16 322.1 ]
+</code></pre></div>      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cell code_cell">
+  <div class="input_area">
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">load_ext</span> <span class="n">watermark</span>
+<span class="o">%</span><span class="n">watermark</span> <span class="o">--</span><span class="n">iversion</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">m</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">u</span> <span class="o">-</span><span class="n">d</span>
+</code></pre></div>    </div>
+  </div>
+
+  <div class="output_wrapper">
+    <div class="output_subarea">
+      <div class="output_stream highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xarray 0.12.1
+last updated: 2019-05-17 
+
+CPython 3.6.7
+IPython 7.5.0
+
+compiler   : GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)
+system     : Darwin
+release    : 18.2.0
+machine    : x86_64
+processor  : i386
+CPU cores  : 8
+interpreter: 64bit
+Git hash   : 83530e805423a8f36958a61783cbbd9fe388eace
+</code></pre></div>      </div>
+    </div>
+  </div>
+</div>
+
+              <nav class="c-page__nav">
+  
+    
+    <a id="js-page__nav__prev" class="c-page__nav__prev" href="/scientific-computing/xarray/02_io">
+      〈 <span class="u-margin-right-tiny"></span> Reading and Writing Files
+    </a>
+  
+
+  
+    
+    <a id="js-page__nav__next" class="c-page__nav__next" href="/scientific-computing/xarray/04_agg">
+      Aggregation <span class="u-margin-right-tiny"></span> 〉
+    </a>
+  
+</nav>
+
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+  </body>
+</html>
