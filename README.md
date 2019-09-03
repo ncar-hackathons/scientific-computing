@@ -1,4 +1,7 @@
 
+> ⚠️ **Warning**: This repository is no longer maintained. Please use the new repo: https://github.com/NCAR/ncar-python-tutorial
+
+
 [![CircleCI](https://img.shields.io/circleci/project/github/ncar-hackathons/scientific-computing/master.svg?style=for-the-badge&logo=circleci)](https://circleci.com/gh/ncar-hackathons/scientific-computing)
 
 
